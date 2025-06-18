@@ -3,7 +3,7 @@ const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 
 const app = express();
-const db = new sqlite3.Database('../frontend/robot/whatsapp.db');
+const db = new sqlite3.Database('../robot/whatsapp.db');
 
 app.use(cors());
 
