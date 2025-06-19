@@ -38,15 +38,17 @@ async function coletarMensagens(page) {
         }
         await page.click(contatoSelector);
 
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        await new Promise(resolve => setTimeout(resolve, 10000));
 
         const mensagens = await page.evaluate(() => {
-            const messageElements = document.querySelectorAll('div.message-in, div.message-out');
-            return Array.from(messageElements).map(msg => {
-                const text = msg.querySelector('span.selectable-text span')?.innerText || '';
-                const time = msg.querySelector('span.x1rg5ohu.x16dsc37')?.innerText || '';
-                const sender = msg.classList.contains('message-out') ? 'Você' : 'Contato';
-                return { text, time, sender };
+            const elements = document.querySelectorAll('div.copyable-text');
+
+            return Array.from(elements).map(el => {
+                const rawHeader = el.getAttribute('data-pre-plain-text') || '';
+                const text = el.querySelector('span.selectable-text span')?.innerText || '';
+                const isOutgoing = el.closest('div.message-out') !== null;
+                const sender = isOutgoing ? 'Você' : 'Contato';
+                return { text, time: rawHeader.trim(), sender };
             });
         });
 
