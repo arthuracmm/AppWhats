@@ -41,12 +41,27 @@ function agruparPorDia(mensagens: Mensagem[]): Record<string, Mensagem[]> {
 
 const ChatView = ({ contato }: ChatViewProps) => {
     const [data, setData] = useState<any[]>([])
+    const [mensagem, setMensagem] = useState('');
+
+    const handleSendMessage = () => {
+        if (!mensagem.trim()) return;
+
+        axios.post('http://localhost:3002/enviar', {
+            contato: contato,
+            mensagem: mensagem
+        })
+            .then(() => {
+                setMensagem('');
+            })
+            .catch(error => {
+                console.error('Erro ao enviar mensagem:', error);
+            });
+    };
 
     useEffect(() => {
         axios.get('http://localhost:3001/mensagens')
             .then(response => {
                 setData(response.data);
-                console.log(response.data)
             })
             .catch(error => {
                 console.log(error);
@@ -122,8 +137,17 @@ const ChatView = ({ contato }: ChatViewProps) => {
                             </div>
 
                             <div className="sticky flex bottom-2 rounded-full mx-2 bg-zinc-700 h-12 items-center overflow-hidden">
-                                <input type="text" placeholder="Digite uma mensagem" className="w-full h-full outline-none px-5 text-xs" />
-                                <div className='bg-emerald-500 py-5 px-10 pr-10 rounded-md hover:bg-emerald-400 cursor-pointer'>
+                                <input
+                                    type="text"
+                                    placeholder="Digite uma mensagem"
+                                    className="w-full h-full outline-none px-5 text-xs"
+                                    value={mensagem}
+                                    onChange={(e) => setMensagem(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') handleSendMessage(); 
+                                    }}
+                                />
+                                <div className='bg-emerald-500 py-5 px-10 pr-10 rounded-md hover:bg-emerald-400 cursor-pointer' onClick={handleSendMessage}>
                                     <Send />
                                 </div>
                             </div>

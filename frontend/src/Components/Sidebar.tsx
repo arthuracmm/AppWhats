@@ -38,7 +38,6 @@ export function Sidebar({ setContactSelected, contato }: SidebarProps) {
             });
     }, []);
 
-    // Filtrando a última mensagem por contato
     const contatosUnicos: Mensagem[] = Object.values(
         data.reduce((acc, msg) => {
             const msgDate = parseHorario(msg.horario);
@@ -60,7 +59,6 @@ export function Sidebar({ setContactSelected, contato }: SidebarProps) {
     );
 
 
-    // Ordenando pela data da mensagem mais recente
     contatosUnicos.sort((a, b) => {
         const dateA = parseHorario(a.horario);
         const dateB = parseHorario(b.horario);
@@ -74,7 +72,7 @@ export function Sidebar({ setContactSelected, contato }: SidebarProps) {
 
 
     return (
-        <div className="flex flex-col gap-2 w-150 bg-zinc-800 text-white p-4 border-r border-zinc-600">
+        <div className="flex flex-col gap-2 w-120 bg-zinc-800 text-white p-4 border-r border-zinc-600">
             <h1 className="text-2xl font-semibold mb-2">AppWhats</h1>
 
             <div className="flex items-center bg-zinc-600 rounded-full py-2 px-4 gap-2">

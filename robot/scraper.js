@@ -26,7 +26,7 @@ async function coletarMensagens(page) {
 
     const resultado = [];
 
-    const limite = 1;
+    const limite = 10;
     const contatosLimitados = contatos.slice(0, limite);
 
     for (const contact of contatosLimitados) {
@@ -59,4 +59,25 @@ async function coletarMensagens(page) {
     return resultado;
 }
 
-module.exports = { iniciarNavegador, coletarMensagens };
+async function enviarMensagem(page, contato, mensagem) {
+    const contatoSelector = `span[title="${contato}"]`;
+
+    const contatoExiste = await page.$(contatoSelector);
+    if (!contatoExiste) {
+        console.warn(`Contato "${contato}" não encontrado.`);
+        return;
+    }
+
+    await page.click(contatoSelector);
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    const caixaTextoSelector = 'div[title="Mensagem"]';
+    await page.waitForSelector(caixaTextoSelector);
+
+    await page.type(caixaTextoSelector, mensagem);
+    await page.keyboard.press('Enter');
+
+    console.log(`Mensagem enviada para ${contato}: ${mensagem}`);
+}
+
+module.exports = { iniciarNavegador, coletarMensagens, enviarMensagem };

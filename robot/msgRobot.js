@@ -10,6 +10,5 @@ const { salvarMensagens } = require('./db');
     }
 
     await page.close();
-    await console.log('Dados Puxados com sucesso');
-
+    console.log('Dados puxados com sucesso');
 })();
