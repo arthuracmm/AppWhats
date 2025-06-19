@@ -17,9 +17,9 @@ export function HomePage() {
   }, []);
 
   return (
-    <div className="flex h-screen bg-zinc-800 text-white">
-      <Sidebar setContactSelected={setContactSelected} />
-      <ChatView contato={contactSelected} />
+    <div className="flex h-screen bg-zinc-800 text-white overflow-hidden">
+      <Sidebar setContactSelected={setContactSelected} contato={contactSelected}/>
+      <ChatView setContactSelected={setContactSelected} contato={contactSelected} />
     </div>
   );
 };
