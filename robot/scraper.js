@@ -26,7 +26,7 @@ async function coletarMensagens(page) {
 
     const resultado = [];
 
-    const limite = 10;
+    const limite = 1;
     const contatosLimitados = contatos.slice(0, limite);
 
     for (const contact of contatosLimitados) {
