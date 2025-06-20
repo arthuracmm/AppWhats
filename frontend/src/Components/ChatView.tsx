@@ -6,6 +6,8 @@ import { Send, User } from 'lucide-react';
 type ChatViewProps = {
     setContactSelected: (contato: string) => void;
     contato: string | null;
+    mensagens: Mensagem[];
+    setMensagens: React.Dispatch<React.SetStateAction<Mensagem[]>>;
 };
 
 type Mensagem = {
@@ -19,12 +21,14 @@ type Mensagem = {
 };
 
 function formatarHorario(horario: string): { hora: string; data: string } {
-    const match = horario.match(/\[(\d{1,2}:\d{2}), (\d{1,2}\/\d{1,2}\/\d{4})]/);
+    const match = horario.match(/\[(\d{1,2}:\d{2}), (\d{1,2}\/\d{1,2}\/\d{4})\]/);
     if (!match) return { hora: '', data: '' };
 
     const [, hora, data] = match;
+    console.log(  `Hora: ${hora}, Data: ${data}`);
     return { hora, data };
 }
+
 
 function agruparPorDia(mensagens: Mensagem[]): Record<string, Mensagem[]> {
     return mensagens.reduce((acc: Record<string, Mensagem[]>, msg: Mensagem) => {
@@ -43,19 +47,40 @@ const ChatView = ({ contato }: ChatViewProps) => {
     const [data, setData] = useState<any[]>([])
     const [mensagem, setMensagem] = useState('');
 
-    const handleSendMessage = () => {
-        if (!mensagem.trim()) return;
+    const handleSendMessage = async () => {
+        if (!mensagem.trim() || !contato) return;
 
-        axios.post('http://localhost:3002/enviar', {
-            contato: contato,
-            mensagem: mensagem
-        })
-            .then(() => {
-                setMensagem('');
-            })
-            .catch(error => {
-                console.error('Erro ao enviar mensagem:', error);
+        try {
+            await axios.post('http://localhost:3001/enviar', {
+                contato: contato,
+                mensagem: mensagem
             });
+
+            const agora = new Date();
+            const hora = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const dataFormatada = formatarData(agora.toLocaleDateString('pt-BR'));
+            const horario = `[${hora}, ${dataFormatada}]`;
+
+            const novaMensagem: Mensagem = {
+                id: Date.now(),
+                contato,
+                texto: mensagem,
+                remetente: 'Você',
+                horario,
+                horaFormatada: hora,
+                dataFormatada,
+            };
+
+            setData(prev => [...prev, novaMensagem]);
+            setMensagem('');
+        } catch (error) {
+            console.error('Erro ao enviar mensagem:', error);
+        }
+    };
+
+    const formatarData = (data: string) => {
+        const [m, d, y] = data.split('/');
+        return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`;
     };
 
     useEffect(() => {
@@ -119,7 +144,7 @@ const ChatView = ({ contato }: ChatViewProps) => {
                                     {Object.entries(mensagensPorDia).map(([data, mensagens]) => (
                                         <div key={data} className=' space-y-1'>
                                             <div className="flex w-full items-center justify-center text-center text-xs text-white/50 my-2">
-                                                <p className='bg-zinc-800 w-fit p-2 rounded-md'>{data}</p>
+                                                <p className='bg-zinc-800 w-fit p-2 rounded-md'>{formatarData(data)}</p>
                                             </div>
                                             {mensagens.map((mensagem, index) => (
                                                 <div key={index} className={`flex ${mensagem.remetente === 'Você' ? 'justify-end' : 'justify-start'}`}>
@@ -144,7 +169,7 @@ const ChatView = ({ contato }: ChatViewProps) => {
                                     value={mensagem}
                                     onChange={(e) => setMensagem(e.target.value)}
                                     onKeyDown={(e) => {
-                                        if (e.key === 'Enter') handleSendMessage(); 
+                                        if (e.key === 'Enter') handleSendMessage();
                                     }}
                                 />
                                 <div className='bg-emerald-500 py-5 px-10 pr-10 rounded-md hover:bg-emerald-400 cursor-pointer' onClick={handleSendMessage}>

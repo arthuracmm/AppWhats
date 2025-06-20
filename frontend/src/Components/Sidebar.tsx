@@ -1,10 +1,10 @@
 import { ArrowRight, SearchIcon, User } from "lucide-react";
-import { useEffect, useState } from "react";
-import axios from 'axios';
+import { useState } from "react";
 
 type SidebarProps = {
     setContactSelected: (contato: string) => void;
     contato: string | null;
+    mensagens: Mensagem[];
 };
 
 type Mensagem = {
@@ -23,23 +23,11 @@ function parseHorario(horarioStr: string): Date | null {
     return new Date(year, month - 1, day, hour, minute);
 }
 
-export function Sidebar({ setContactSelected, contato }: SidebarProps) {
+export function Sidebar({ setContactSelected, contato, mensagens }: SidebarProps) {
     const [search, setSearch] = useState<string>('');
-    const [data, setData] = useState<any[]>([]);
-
-
-    useEffect(() => {
-        axios.get('http://localhost:3001/mensagens')
-            .then(response => {
-                setData(response.data);
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }, []);
 
     const contatosUnicos: Mensagem[] = Object.values(
-        data.reduce((acc, msg) => {
+        mensagens.reduce((acc, msg) => {
             const msgDate = parseHorario(msg.horario);
             const current = acc[msg.contato];
             const currentDate = current ? parseHorario(current.horario) : null;
@@ -58,13 +46,12 @@ export function Sidebar({ setContactSelected, contato }: SidebarProps) {
         }, {} as Record<string, any>)
     );
 
-
     contatosUnicos.sort((a, b) => {
         const dateA = parseHorario(a.horario);
         const dateB = parseHorario(b.horario);
         if (dateA && dateB) {
-            const timeDiff = dateA.getTime() - dateB.getTime();
-            return timeDiff !== 0 ? timeDiff : a.id - b.id;
+            const timeDiff = dateB.getTime() - dateA.getTime();
+            return timeDiff !== 0 ? timeDiff : b.id - a.id;
         }
         return 0;
     });

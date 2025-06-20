@@ -2,6 +2,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "puppeteer": "^24.10.2",
     "sqlite3": "^5.1.7"
   }
 }
