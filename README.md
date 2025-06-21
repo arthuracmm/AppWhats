@@ -54,10 +54,13 @@ npm install
 npx tsx server.js
 ```
 
+Abrirá novamente o seu Whatsapp, pode retornar o Visual Studio Code e deixar ele de segundo plano
+
 Você verá uma mensagem como:
 
 ```bash
 API rodando em http://localhost:3001
+WhatsApp iniciado.
 ```
 
 Para verificar os dados coletados, acesse a rota:
@@ -88,6 +91,12 @@ VITE v6.3.5  ready in 909 ms
 ➜  press h + enter to show help
 ```
 
+### Agora desfrute
+
+Digite a mensagem para qualquer pessoa que deseja e aperte ENTER ou o botão de enviar a mensagem e veja o robo trabalhar
+(Como roda em segundo plano pra voce ver precisa dar um ALT + TAB rapidinho)
+Ele vai selecionar a caixa de pesquisa, colar o nome do contato, abrir a conversa e digitar, tem um atraso de alguns segundos para o sistema rodar em qualquer hardware.
+
 ---
 
 ## Resultado Final
@@ -99,6 +108,11 @@ Agora você tem um sistema web semelhante ao WhatsApp Web, usando seus próprios
 * Separação e organização dos usuários que enviam mensagens para diferentes funcionários.
 
 Fica a dica para explorar e expandir o sistema conforme sua necessidade!
+
+---
+
+### Print Tela de conversas
+![sadadasdsadas](https://github.com/user-attachments/assets/a448a02f-1434-4d19-95d0-baaf6eb37e24)
 
 ---
 
