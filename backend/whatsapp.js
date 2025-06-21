@@ -1,12 +1,12 @@
 const puppeteer = require('puppeteer');
-const db = require('./database'); // se quiser separar a conexão SQLite
+const db = require('./database');
 let browser, page;
 
 async function iniciarWhatsApp() {
     if (!browser) {
         browser = await puppeteer.launch({
             headless: false,
-            userDataDir: './whatsapp-session',
+            userDataDir: '../robot/whatsapp-session',
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
             defaultViewport: null
         });

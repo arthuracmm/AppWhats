@@ -1,15 +1,20 @@
 const puppeteer = require('puppeteer');
+let browser, page;
 
 async function iniciarNavegador() {
-    const browser = await puppeteer.launch({
-        headless: false,
-        defaultViewport: null,
-        args: ['--start-maximized'],
-    });
 
-    const page = await browser.newPage();
-    await page.goto('https://web.whatsapp.com');
-
+    if (!browser) {
+        browser = await puppeteer.launch({
+            headless: false,
+            userDataDir: './whatsapp-session',
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            defaultViewport: null
+        });
+        const pages = await browser.pages();
+        page = pages[0];
+        await page.goto('https://web.whatsapp.com', { waitUntil: 'networkidle2' });
+        console.log('WhatsApp iniciado.');
+    }
     console.log('Aguardando login...');
     await page.waitForSelector('.x1y332i5.x1n2onr6.x6ikm8r.x10wlt62.xjwt4uw');
     console.log('Login realizado!');
@@ -26,7 +31,7 @@ async function coletarMensagens(page) {
 
     const resultado = [];
 
-    const limite = 10;
+    const limite = 10; // Defina o número máximo de contatos a serem processados
     const contatosLimitados = contatos.slice(0, limite);
 
     for (const contact of contatosLimitados) {
@@ -34,7 +39,7 @@ async function coletarMensagens(page) {
         const contatoExiste = await page.$(contatoSelector);
         if (!contatoExiste) {
             console.warn(`Contato "${contact}" não encontrado, pulando...`);
-            continue; // pula para o próximo contato
+            continue; 
         }
         await page.click(contatoSelector);
 
